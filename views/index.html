@@ -2,7 +2,6 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
     <meta
       http-equiv="Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
@@ -11,10 +10,12 @@
       http-equiv="X-Content-Security-Policy"
       content="default-src 'self'; script-src 'self'"
     />
-    <title>Bonjour depuis le rendu d'Electron !</title>
+    <title>Scan Scrapper</title>
   </head>
   <body>
-    <h1>Bonjour depuis le rendu d'Electron !</h1>
+    Title: <input id="title"/>
     <p>👋</p>
+    <p id="info"></p>
+    <script src="../scripts/renderer.js"></script>
   </body>
 </html>
