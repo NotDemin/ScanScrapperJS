@@ -7,27 +7,23 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   })
-
-  ipcMain.on('set-title', (event, title) => {
-    const webContents = event.sender
-    const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(title)
-  })
-
   win.loadFile('views/index.html');
 };
 
+ipcMain.handle('scraplink', (event, link) => {
+  if(link.substring(0,8).match("https://") || link.substring(0,8).match("sushisca")){
+    if(link.match(`https://sushiscan.su/${link.substring(21)}`)) return "lien valide"
+    if(link.match(`sushiscan.su/${link.substring(13)}`)) return "lien valide"
+  }
+  return "lien non valide"
+})
 
-function handleSetTitle (event, title) {
-    const webContents = event.sender
-    const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(title)
-}
 
 app.whenReady().then(() => {
-    ipcMain.on('set-title', handleSetTitle)
     createWindow();
 
   app.on('activate', () => {

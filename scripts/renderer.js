@@ -1,11 +1,12 @@
-const information = document.querySelector('#info')
-information.innerText = `Cette application utilise Chrome (v${versions.chrome()}), Node.js (v${versions.node()}), et Electron (v${versions.electron()})`
+let { ipcRenderer } = require("electron")
 
-const setButton = document.getElementById('btn')
-const titleInput = document.getElementById('title')
-setButton.addEventListener('click', () => {
-    const title = titleInput.value
-    window.electronAPI.setTitle(title)
+const setButton = document.querySelector('#btn')
+const linkInput = document.querySelector('#link')
+const response = document.querySelector('#response')
+setButton.addEventListener('click', async (e) => {
+    e.preventDefault()
+    let link = linkInput.value
+    console.log(link)
+    let responseText = await ipcRenderer.invoke("scraplink", link)
+    response.innerText = responseText
 });
-  
-func()
