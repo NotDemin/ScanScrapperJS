@@ -10,7 +10,6 @@ const createWindow = () => {
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: true,
-      contextIsolation: false,
     },
   })
   win.loadFile('views/index.html');
@@ -38,7 +37,7 @@ function HTMLScrapSushi(link){
   });
 }
 
-HTMLScrapSushi('https://sushiscan.su/dandadan-chapitre-63/')
+//HTMLScrapSushi('https://sushiscan.su/dandadan-chapitre-63/')
 
 function downloadImage(url, filepath) {    
     return new Promise((resolve, reject) => {
@@ -59,27 +58,11 @@ function downloadImage(url, filepath) {
 }
 
 ipcMain.handle('scraplink', (event, link) => {
+  console.log(link)
   if(link.substring(0,8).match("https://") || link.substring(0,8).match("sushisca")){
-    if(link.match(`https://sushiscan.su/${link.substring(21)}`)){
-
-
-
-      return downloadImage(link, 'test.png')
-        .then(console.log)
-        .catch((err) => {
-          return err
-        });
-    }
-    if(link.match(`sushiscan.su/${link.substring(13)}`)){
-
-      return downloadImage(link, 'test.png')
-        .then(console.log)
-        .catch((err) => {
-          return err
-        });
-    }
+      return "Manga Valide"
   }
-  return "lien non valide"
+  return "Manga non valide"
 })
 
 
