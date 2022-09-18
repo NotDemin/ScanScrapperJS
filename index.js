@@ -17,50 +17,36 @@ const createWindow = () => {
 
 function HTMLScrapSushi(link){
 
-  const options = {
-    headers: {
-        'User-Agent': 'some app v1.3 (example@gmail.com)',
-    }
-  };
+  return new Promise((resolve, reject) => {
 
-  https.get(link, options, (res) => {
-    let rawHtml = '';
-    res.on('data', (chunk) => { rawHtml += chunk; });
-    res.on('end', () => {
-        try {
-            console.log(rawHtml);
-        } 
-        catch (e) {
-            console.error(e.message);
-        }
-    });
-  });
-}
+    const options = {
+      headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.102 Safari/537.36',
+      }
+    };
 
-//HTMLScrapSushi('https://sushiscan.su/dandadan-chapitre-63/')
-
-function downloadImage(url, filepath) {    
-    return new Promise((resolve, reject) => {
-      https.get(url, (res) => {
-          if(res.statusCode === 200){
-              res.pipe(fs.createWriteStream(filepath))
-                  .on('error', reject)
-                  .once('close', () => resolve(filepath));
+    https.get(link, options, res => {
+      let rawHtml = '';
+      res.on('data', (chunk) => { rawHtml += chunk; });
+      res.on('end', () => {
+          try {
+              //console.log("sa a marcher");
+              resolve(rawHtml)
           } 
-          else{
-              // Consume response data to free up memory
-              res.resume();
-              reject(new Error(`Request Failed With a Status Code: ${res.statusCode}`));
-              return "Ton manga n'existe pas"
+          catch (e) {
+              reject(e.message)
           }
       });
     });
+  })
 }
 
-ipcMain.handle('scraplink', (event, link) => {
-  console.log(link)
+ipcMain.handle('scraplink', async (event, link) => {
   if(link.substring(0,8).match("https://") || link.substring(0,8).match("sushisca")){
-      return "Manga Valide"
+      let HTML = await HTMLScrapSushi(link)
+      //console.log(HTML)
+      if(HTML.includes(`<img src="https://sushiscan.su/wp-content/themes/sushiscan/assets/images/404.png" />`)) return "Manga non valide"
+      return "Manga valide"
   }
   return "Manga non valide"
 })
