@@ -17,6 +17,10 @@ const createWindow = () => {
 
 function HTMLScrapSushi(link){
 
+  if(link.substring(0,8).match("sushisca")){
+    link = `https://${link}`
+  }
+
   return new Promise((resolve, reject) => {
 
     const options = {
@@ -27,6 +31,10 @@ function HTMLScrapSushi(link){
 
     https.get(link, options, res => {
       let rawHtml = '';
+      if(res.statusCode == "404"){
+        rawHtml = false
+        resolve(rawHtml)
+      }
       res.on('data', (chunk) => { rawHtml += chunk; });
       res.on('end', () => {
           try {
@@ -41,16 +49,25 @@ function HTMLScrapSushi(link){
   })
 }
 
-ipcMain.handle('scraplink', async (event, link) => {
+ipcMain.handle('scraplinksushiscan', async (event, link) => {
+  if(!link.includes('sushiscan.su')) return "T'essaye d'acceder au mauvais site"
   if(link.substring(0,8).match("https://") || link.substring(0,8).match("sushisca")){
       let HTML = await HTMLScrapSushi(link)
       //console.log(HTML)
-      if(HTML.includes(`<img src="https://sushiscan.su/wp-content/themes/sushiscan/assets/images/404.png" />`)) return "Manga non valide"
-      return "Manga valide"
-  }
-  return "Manga non valide"
-})
+      if(HTML === false) return "Manga non valide (404)"
+      let linkChap1
+      if(link.slice(-1) !== "/"){
+        linkChap1 = `${link}-chapitre-1`
+      }
+      else if(link.slice(-1) === "/"){
+        link = link.slice(0, -1)
+        linkChap1 = `${link}-chapitre-1`
+      }
 
+      return linkChap1
+  }
+  return "Lien non valide"
+})
 
 app.whenReady().then(() => {
     createWindow();
