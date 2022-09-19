@@ -37,19 +37,20 @@ function HTMLScrapSushi(link){
       }
       res.on('data', (chunk) => { rawHtml += chunk; });
       res.on('end', () => {
-          try {
-              //console.log("sa a marcher");
-              resolve(rawHtml)
-          } 
-          catch (e) {
-              reject(e.message)
-          }
+        try {
+            //console.log("sa a marcher");
+            resolve(rawHtml)
+        } 
+        catch (e) {
+            reject(e.message)
+        }
       });
     });
   })
 }
 
 ipcMain.handle('scraplinksushiscan', async (event, link) => {
+  if(link === "") return "Met un lien stp"
   if(!link.includes('sushiscan.su')) return "T'essaye d'acceder au mauvais site"
   if(link.substring(0,8).match("https://") || link.substring(0,8).match("sushisca")){
       let HTML = await HTMLScrapSushi(link)
@@ -63,7 +64,6 @@ ipcMain.handle('scraplinksushiscan', async (event, link) => {
         link = link.slice(0, -1)
         linkChap1 = `${link}-chapitre-1`
       }
-
       return linkChap1
   }
   return "Lien non valide"
