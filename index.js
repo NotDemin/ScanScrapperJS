@@ -150,6 +150,7 @@ function GenerateLinkChapitreSushi(link){
 ipcMain.handle('scraplinksushiscan', async (event, link) => {
   if(link === "") return "Met un lien stp"
   if(!link.includes('sushiscan.su')) return "T'essaye d'acceder au mauvais site"
+  if(link.includes('manga/')) link = link.replace('manga/', '')
   if(link.substring(0,8).match("https://") || link.substring(0,8).match("sushisca")){
 
       let HTML = await HTMLScrapSushi(link)
